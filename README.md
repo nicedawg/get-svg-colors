@@ -48,7 +48,6 @@ npm test
 
 ## Dependencies
 
-- [cheerio](https://github.com/cheeriojs/cheerio): Tiny, fast, and elegant implementation of core jQuery designed specifically for the server
 - [chroma-js](https://github.com/gka/chroma.js): JavaScript library for color conversions
 - [is-svg](https://github.com/sindresorhus/is-svg): Check if a String/Buffer is SVG
 - [lodash.compact](https://github.com/lodash/lodash): The modern build of lodash’s `_.compact` as a module.

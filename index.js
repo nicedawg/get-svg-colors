@@ -1,6 +1,3 @@
-const fs = require('fs')
-const cheerio = require('cheerio')
-const isSVG = require('is-svg')
 const uniq = require('lodash.uniq')
 const compact = require('lodash.compact')
 const chroma = require('chroma-js')
@@ -18,35 +15,57 @@ function color(str) {
 
 module.exports = function getSvgColors(input, options) {
 
-  if (!isSVG(input)) {
-    input = fs.readFileSync(input, 'utf8')
-  }
+  // load svg in a way that we can query it for attributes
+  let parser = new DOMParser();
+  let doc = parser.parseFromString(input, "image/svg+xml");
 
-  const $ = cheerio.load(input)
+  let elements = [];
 
   // Find elements with a `fill` attribute
-  var fills = $('[fill]').map(function (i, el) {
-    return color($(this).attr('fill'))
-  }).get()
+  let fills = [];
+  elements = doc.querySelectorAll('[fill]');
+  for (let i = 0; i < elements.length; i++) {
+    let fill = color(elements[i].getAttribute('fill'));
+    if (fill) {
+      fills.push(fill.hex());
+    }
+  }
 
-  // Find elements with a `stroke` attribute
-  var strokes = $('[stroke]').map(function (i, el) {
-    return color($(this).attr('stroke'))
-  }).get()
+  let strokes = [];
+  elements = doc.querySelectorAll('[stroke]');
+  for (let i = 0; i < elements.length; i++) {
+    let stroke = color(elements[i].getAttribute('stroke'));
+    if (stroke) {
+      strokes.push(stroke.hex());
+    }
+  }
 
   // Find `fill` and `stroke` within inline styles
-  $('[style]').each(function (i, el) {
-    fills.push(color($(this).css('fill')))
-    strokes.push(color($(this).css('stroke')))
-  })
+  elements = doc.querySelectorAll('[style]');
+  for (let i = 0; i < elements.length; i++) {
+    let fill = color(elements[i].style.fill);
+    if (fill) {
+      fills.push(fill.hex());
+    }
+
+    let stroke = color(elements[i].style.stroke);
+    if (stroke) {
+      strokes.push(stroke.hex());
+    }
+  }
 
   // Find elements with a `stop-color` attribute (gradients)
-  var stops = $('[stop-color]').map(function (i, el) {
-    return color($(this).attr('stop-color'))
-  }).get()
+  let stops = [];
+  elements = doc.querySelectorAll('[stop-color]');
+  for (let i = 0; i < elements.length; i++) {
+    let stopColor = color(elements[i].getAttribute('stop-color'));
+    if (stopColor) {
+      stops.push(stopColor.hex());
+    }
+  }
 
   if (options && options.flat) {
-    return compact(uniq(fills.concat(strokes).concat(stops)))
+    return compact(uniq(fills.concat(strokes).concat(stops)));
   }
 
   return {
@@ -54,5 +73,4 @@ module.exports = function getSvgColors(input, options) {
     strokes: compact(uniq(strokes)),
     stops: compact(uniq(stops))
   }
-
 }
