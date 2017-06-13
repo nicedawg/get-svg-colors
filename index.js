@@ -47,6 +47,9 @@ module.exports = function getSvgColors(input, options) {
   // Find `fill` and `stroke` within inline styles
   elements = doc.querySelectorAll('[style]');
   for (let i = 0; i < elements.length; i++) {
+    if (!elements[i].style) {
+      continue;
+    }
     let fill = color(elements[i].style.fill);
     if (fill) {
       fills.push(fill.hex());
