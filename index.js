@@ -10,6 +10,10 @@ function isColorString(str) {
 }
 
 function color(str) {
+  if (str.startsWith("rgb")) {
+    let rgb = str.replace(/[^\d,]/g, '').split(',');
+    return chroma(str);
+  }
   return isColorString(str) ? chroma(str) : null
 }
 
