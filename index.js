@@ -11,7 +11,7 @@ function isColorString(str) {
 
 function color(str) {
   if (str.startsWith("rgb")) {
-    let rgb = str.replace(/[^\d,]/g, '').split(',');
+    var rgb = str.replace(/[^\d,]/g, '').split(',');
     return chroma(str);
   }
   return isColorString(str) ? chroma(str) : null
@@ -20,25 +20,25 @@ function color(str) {
 module.exports = function getSvgColors(input, options) {
 
   // load svg in a way that we can query it for attributes
-  let parser = new DOMParser();
-  let doc = parser.parseFromString(input, "image/svg+xml");
+  var parser = new DOMParser();
+  var doc = parser.parseFromString(input, "image/svg+xml");
 
-  let elements = [];
+  var elements = [];
 
   // Find elements with a `fill` attribute
-  let fills = [];
+  var fills = [];
   elements = doc.querySelectorAll('[fill]');
-  for (let i = 0; i < elements.length; i++) {
-    let fill = color(elements[i].getAttribute('fill'));
+  for (var i = 0; i < elements.length; i++) {
+    var fill = color(elements[i].getAttribute('fill'));
     if (fill) {
       fills.push(fill.hex());
     }
   }
 
-  let strokes = [];
+  var strokes = [];
   elements = doc.querySelectorAll('[stroke]');
-  for (let i = 0; i < elements.length; i++) {
-    let stroke = color(elements[i].getAttribute('stroke'));
+  for (var i = 0; i < elements.length; i++) {
+    var stroke = color(elements[i].getAttribute('stroke'));
     if (stroke) {
       strokes.push(stroke.hex());
     }
@@ -46,26 +46,26 @@ module.exports = function getSvgColors(input, options) {
 
   // Find `fill` and `stroke` within inline styles
   elements = doc.querySelectorAll('[style]');
-  for (let i = 0; i < elements.length; i++) {
+  for (var i = 0; i < elements.length; i++) {
     if (!elements[i].style) {
       continue;
     }
-    let fill = color(elements[i].style.fill);
+    var fill = color(elements[i].style.fill);
     if (fill) {
       fills.push(fill.hex());
     }
 
-    let stroke = color(elements[i].style.stroke);
+    var stroke = color(elements[i].style.stroke);
     if (stroke) {
       strokes.push(stroke.hex());
     }
   }
 
   // Find elements with a `stop-color` attribute (gradients)
-  let stops = [];
+  var stops = [];
   elements = doc.querySelectorAll('[stop-color]');
-  for (let i = 0; i < elements.length; i++) {
-    let stopColor = color(elements[i].getAttribute('stop-color'));
+  for (var i = 0; i < elements.length; i++) {
+    var stopColor = color(elements[i].getAttribute('stop-color'));
     if (stopColor) {
       stops.push(stopColor.hex());
     }
